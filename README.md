@@ -1,1 +1,1 @@
-# tesi-cs-2025
+# INFORMATICA (L-13) Tesi 2025
