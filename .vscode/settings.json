@@ -1,0 +1,34 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.espIdfPathWin": "C:\\Users\\Younes\\esp\\v5.4.1\\esp-idf",
+    "idf.pythonInstallPath": "/usr/bin/python",
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ],
+    "idf.portWin": "COM7",
+    "idf.toolsPathWin": "C:\\Users\\Younes\\.espressif",
+    "idf.customExtraVars": {
+        "IDF_TARGET": "esp32s3"
+    },
+    "idf.flashType": "UART",
+    "files.associations": {
+        "esp_netif_ip_addr.h": "c",
+        "esp_wifi.h": "c",
+        "wifi_manager.h": "c",
+        "esp_crt_bundle.h": "c",
+        "string.h": "c",
+        "config.h": "c",
+        "cjson.h": "c",
+        "nvs_flash.h": "c",
+        "esp_http_client.h": "c",
+        "wifi.h": "c",
+        "logging.h": "c",
+        "memory.h": "c",
+        "connection.h": "c",
+        "task.h": "c",
+        "freertos.h": "c",
+        "system.h": "c",
+        "dto-builder.h": "c"
+    },
+    "idf.port": "/dev/ttyACM0"
+}
