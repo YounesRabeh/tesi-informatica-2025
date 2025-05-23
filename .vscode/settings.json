@@ -28,7 +28,9 @@
         "task.h": "c",
         "freertos.h": "c",
         "system.h": "c",
-        "dto-builder.h": "c"
+        "dto-builder.h": "c",
+        "esp_modem_api.h": "c",
+        "multimeter.h": "c"
     },
     "idf.port": "/dev/ttyACM0"
 }

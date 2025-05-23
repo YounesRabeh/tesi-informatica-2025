@@ -5,8 +5,9 @@ idf_component_register(
         "connection/lte.c" 
         "connection/internet.c"
         "data/dto-builder.c"
+        "io/multimeter.c"
         "main.c"
-    INCLUDE_DIRS "." "system" "connection" "data" 
+    INCLUDE_DIRS "." "system" "connection" "data" "io" 
     REQUIRES 
         esp_http_client
         esp-tls
@@ -17,7 +18,6 @@ idf_component_register(
         esp-modbus
         freertos
         esp_event
-        
 )
 
 # Check if the environment variables are set
