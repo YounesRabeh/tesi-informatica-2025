@@ -4,15 +4,24 @@
 #include "cJSON.h"
 
 // Modbus configuration
+// Modbus port number
 #define MB_PORT_NUM         1
+// Modbus communication speed
 #define MB_DEV_SPEED        19200
+// Modbus communication mode
 #define MB_PARITY_MODE      UART_PARITY_DISABLE
+// Modbus slave address (multimeter address)
 #define MB_SLAVE_ADDR       1
+// Modbus UTART Transmit
 #define MB_UART_TXD         7
+// Modbus UART Receive
 #define MB_UART_RXD         8
+// Modbus UART (Request to Send)
 #define MB_UART_RTS         4
 
-// Structure for multimeter data
+/** 
+ * @brief Modbus communication information structure.
+ */
 typedef struct {
     const char *name;
     const char *unit;
@@ -20,7 +29,9 @@ typedef struct {
     esp_err_t error;
 } MultimeterData;
 
-// Structure for register configuration
+/**
+ * @brief register definition for the UMP209 multimeter.
+ */
 typedef struct {
     const char *name;
     const char *unit;
@@ -30,17 +41,33 @@ typedef struct {
     float scale;
 } MultimeterRegister;
 
-// Modbus initialization
+/**
+ * @brief Multimeter initialization. 
+ * This function initializes the Modbus master communication
+ */
 esp_err_t multimeter_init(void);
 
-// Read all registers
+/** 
+ * @brief Reads data from the multimeter.
+ */
 esp_err_t multimeter_read_data(MultimeterData *data, size_t *num_registers);
 
-// Convert data to JSON string (caller must free memory)
+/** 
+ * @brief Converts multimeter data to JSON format.
+ */
 char* multimeter_to_json(const MultimeterData *data, size_t num_registers);
 
-// Cleanup resources
+/**
+ * @brief Cleans up the multimeter resources.
+ * This function stops the Modbus master communication and frees resources.
+ */
 void multimeter_cleanup(void);
 
-// Add this prototype
+/**
+ * @brief Checks if a Modbus slave is responsive.
+ * 
+ * @param slave_addr The address of the Modbus slave to check.
+ * @param timeout_ms Timeout in milliseconds for the check.
+ * @return ESP_OK if the slave is responsive, otherwise an error code.
+ */
 esp_err_t multimeter_check_slave(uint8_t slave_addr, uint32_t timeout_ms);
