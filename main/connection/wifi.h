@@ -37,6 +37,11 @@ extern EventGroupHandle_t wifi_event_group;
 extern esp_netif_ip_info_t ip_info;
 
 /**
+ * @brief The current retry count for WiFi connection attempts, (reset on successful connection).
+ */
+extern int retry_count;
+
+/**
  * @brief Initializes WiFi in Station (STA) mode.
  *
  * - Initializes the network interface and default event loop.

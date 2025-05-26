@@ -31,7 +31,9 @@
         "dto-builder.h": "c",
         "esp_modem_api.h": "c",
         "multimeter.h": "c",
-        "esp_err.h": "c"
+        "esp_err.h": "c",
+        "uart.h": "c",
+        "target_registers.h": "c"
     },
     "idf.port": "/dev/ttyACM0"
 }

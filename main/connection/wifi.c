@@ -5,9 +5,9 @@ static const char *TAG = "WIFI";
 
 
 EventGroupHandle_t wifi_event_group;
-
 esp_netif_ip_info_t ip_info;
-static int retry_count = 0;
+
+int retry_count = 0;
 
 /**
  * @brief WiFi event handler callback.

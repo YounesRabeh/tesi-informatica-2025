@@ -1,6 +1,8 @@
 #include "dto-builder.h"
 
 
+
+//TEMP: for testing purposes, delete after modbus is implementedq
 static cJSON *build_device_info(void)
 {
     // (Use real data later)

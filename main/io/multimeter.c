@@ -5,17 +5,9 @@
 #include "cJSON.h"
 #include <math.h>
 
+
 #define TAG "MULTIMETER"
 
-
-
-// Register configuration
-static const MultimeterRegister registers[] = {
-    // Instant values
-    { "Voltage_L1", "V", 0x0000, 2, 0x04, 0.001 },
-    { "Current_L1", "A", 0x000E, 2, 0x04, 0.001 },
-    // Add other registers...
-};
 
 static void* master_handler = NULL;
 
@@ -48,11 +40,10 @@ esp_err_t multimeter_init(void) {
 
 esp_err_t multimeter_read_data(MultimeterData *data, size_t *num_registers) {
     if (!data || !num_registers) return ESP_ERR_INVALID_ARG;
-    
-    *num_registers = sizeof(registers)/sizeof(registers[0]);
+
     
     for (size_t i = 0; i < *num_registers; i++) {
-        const MultimeterRegister *reg = &registers[i];
+        const MultimeterRegister *reg = &target_register_set.registers[i];
         uint16_t raw_data[4] = {0};
         
         mb_param_request_t request = {
@@ -105,7 +96,7 @@ char* multimeter_to_json(const MultimeterData *data, size_t num_registers) {
         if (data[i].error == ESP_OK) {
             cJSON_AddNumberToObject(item, "value", data[i].value);
         } else {
-            cJSON_AddStringToObject(item, "error", 
+            cJSON_AddStringToObject(item, "[!!!] -error", 
                 esp_err_to_name(data[i].error));
         }
         

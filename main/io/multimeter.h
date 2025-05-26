@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "esp_err.h"
 #include "cJSON.h"
+#include "target_registers.h"
 
 // Modbus configuration
 // Modbus port number
@@ -19,27 +20,7 @@
 // Modbus UART (Request to Send)
 #define MB_UART_RTS         4
 
-/** 
- * @brief Modbus communication information structure.
- */
-typedef struct {
-    const char *name;
-    const char *unit;
-    float value;
-    esp_err_t error;
-} MultimeterData;
 
-/**
- * @brief register definition for the UMP209 multimeter.
- */
-typedef struct {
-    const char *name;
-    const char *unit;
-    uint16_t reg_start;
-    uint8_t reg_size;
-    uint8_t command;
-    float scale;
-} MultimeterRegister;
 
 /**
  * @brief Multimeter initialization. 

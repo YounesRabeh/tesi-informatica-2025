@@ -5,6 +5,7 @@ idf_component_register(
         "connection/lte.c" 
         "connection/internet.c"
         "data/dto-builder.c"
+        "io/target_registers.c"
         "io/multimeter.c"
         "main.c"
     INCLUDE_DIRS "." "system" "connection" "data" "io" 
