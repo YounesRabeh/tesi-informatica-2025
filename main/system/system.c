@@ -1,6 +1,7 @@
 #include "system.h"
 
 #include <string.h>
+#include "esp_err.h"
 #include "config.h"
 #include "logging.h"
 #include "memory.h"

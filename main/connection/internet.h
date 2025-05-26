@@ -7,24 +7,32 @@
 #include "esp_crt_bundle.h"
 #include "dto-builder.h"
 
+/**
+ * @brief The URL of the API endpoint to get time from.
+ */
 #define NTP_SERVER "pool.ntp.org"
-#define NTP_RETRY_ATTEMPTS 20
+/** 
+ * @brief The maximum number of attempts to retry NTP synchronization. 
+ */
+#define NTP_MAX_RETRY_ATTEMPTS 5
 
 
 /**
  * @brief Initializes the available network interfaces.
- *
  * This will initialize Wi-Fi, LTE, or both based on configuration.
+ * @return ESP_OK on success, or an error code on failure.
  */
-void connection_init(void);
+esp_err_t connection_init(void);
 
 /**
  * @brief Sets up NTP time synchronization.
  *
  * This function configures the SNTP client to synchronize time with the specified NTP server.
  * It will retry for a specified number of attempts until the time is synchronized.
+ * 
+ * @return ESP_OK on success, or an error code on failure.
  */
-void setup_ntp_time(void);
+esp_err_t setup_ntp_time(void);
 
 /**
  * @brief Sends JSON data to the server.

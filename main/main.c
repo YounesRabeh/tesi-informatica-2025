@@ -46,6 +46,5 @@ void app_main(void)
 
     // Cleanup
     multimeter_cleanup();
-    
-  
+
 }

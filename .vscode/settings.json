@@ -30,7 +30,8 @@
         "system.h": "c",
         "dto-builder.h": "c",
         "esp_modem_api.h": "c",
-        "multimeter.h": "c"
+        "multimeter.h": "c",
+        "esp_err.h": "c"
     },
     "idf.port": "/dev/ttyACM0"
 }

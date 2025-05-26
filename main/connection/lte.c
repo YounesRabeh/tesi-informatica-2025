@@ -1,10 +1,11 @@
 #include "lte.h"
-#include "logging.h"
+
+#include "esp_err.h"
 
 static const char *TAG = "LTE";
 
 
-void lte_init(void)
+esp_err_t lte_init(void)
 {
     LOG_INFO(TAG, "Initializing LTE modem...");
 
@@ -13,4 +14,5 @@ void lte_init(void)
 
     // Stub for now
     LOG_WARNING(TAG, "LTE logic not implemented yet.");
+    return ESP_OK; // Return success for now, implement actual logic later
 }

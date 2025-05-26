@@ -2,20 +2,31 @@
 #include "internet.h"
 #include "logging.h"
 
+/**
+ * @brief The Internet module Tag for logging.
+ */
 static const char *TAG = "INTERNET";
 
 
-void connection_init(void)
+esp_err_t connection_init(void)
 {
-   
-    if (wifi_init_sta() == ESP_OK) {
+    esp_err_t ret = wifi_init_sta();
+    if (ret == ESP_OK) {
         LOG_SUCCESS(TAG, "Wi-Fi connected successfully, no need for LTE.");
     } else {
-        LOG_WARNING(TAG, "Wi-Fi failed, falling back to LTE.");
-        lte_init();
+        LOG_WARNING(TAG, "Wi-Fi failed (err=0x%x), falling back to LTE.", ret);
+        ret = lte_init();
+        if (ret != ESP_OK) {
+            LOG_ERROR(TAG, "LTE initialization failed (err=0x%x)", ret);
+            return ret;
+        }
     }
-    
-    setup_ntp_time(); // For now time is redundent
+
+    if (setup_ntp_time() != ESP_OK) {
+        LOG_WARNING(TAG, "NTP time setup failed");
+    }
+
+    return ESP_OK;
 }
 
 esp_err_t send_data(cJSON *json)
@@ -66,25 +77,27 @@ esp_err_t send_data(cJSON *json)
     return err;
 }
 
-void setup_ntp_time(void) {
-    esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
+esp_err_t setup_ntp_time(void) {
+   esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
     esp_sntp_setservername(0, NTP_SERVER);
     esp_sntp_init();
+
     time_t now = 0;
     struct tm timeinfo = { 0 };
-    int retry_attemps = NTP_RETRY_ATTEMPTS;
-    // Wait until time is synchronized (time.tm_year is >= 2020)
-    while (timeinfo.tm_year < (2020 - 1900) && retry_attemps > 0) {
+    int retry_attempts = NTP_MAX_RETRY_ATTEMPTS;
+
+    while (timeinfo.tm_year < (2020 - 1900) && retry_attempts > 0) {
         time(&now);
         localtime_r(&now, &timeinfo);
         vTaskDelay(pdMS_TO_TICKS(1000));  
-        retry_attemps--;
+        retry_attempts--;
     }
-    if (retry_attemps == 0) {
-        LOG_ERROR(TAG, "Failed to sync time after %d attempts", NTP_RETRY_ATTEMPTS);
+    if (retry_attempts == 0) {
+        LOG_ERROR(TAG, "Failed to sync time after %d attempts", NTP_MAX_RETRY_ATTEMPTS);
+        return ESP_FAIL;
     } else {
         LOG_SUCCESS(TAG, "Time synchronized: %s", asctime(&timeinfo));
+        return ESP_OK;
     }
-
 }
 

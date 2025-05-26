@@ -1,16 +1,10 @@
 #include <string.h> 
 #include "wifi.h"
-#include "config.h"
-#include "logging.h"
-
 
 static const char *TAG = "WIFI";
 
 
 EventGroupHandle_t wifi_event_group;
-
-const int WIFI_CONNECTED_BIT = BIT0;
-const int WIFI_FAIL_BIT = BIT1;
 
 esp_netif_ip_info_t ip_info;
 static int retry_count = 0;

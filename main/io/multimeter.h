@@ -12,7 +12,7 @@
 #define MB_PARITY_MODE      UART_PARITY_DISABLE
 // Modbus slave address (multimeter address)
 #define MB_SLAVE_ADDR       1
-// Modbus UTART Transmit
+// Modbus UART Transmit
 #define MB_UART_TXD         7
 // Modbus UART Receive
 #define MB_UART_RXD         8
