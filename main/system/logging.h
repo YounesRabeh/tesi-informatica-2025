@@ -7,7 +7,7 @@
 
 
 
-#define TAG_SIZE "%-10s"
+#define TAG_SIZE "%-12s"
 
 #define COLOR_RESET    "\033[0m"
 #define COLOR_WHITE    "\033[0;37m"

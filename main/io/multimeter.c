@@ -1,6 +1,7 @@
 #include "multimeter.h"
 #include "mbcontroller.h"
 #include "esp_log.h"
+#include "logging.h"
 #include "driver/uart.h"
 #include "cJSON.h"
 #include <math.h>
@@ -34,6 +35,10 @@ esp_err_t multimeter_init(void) {
     if ((err = mbc_master_setup((void*)&comm))) return err;
     if ((err = uart_set_pin(MB_PORT_NUM, MB_UART_TXD, MB_UART_RXD, MB_UART_RTS, UART_PIN_NO_CHANGE))) return err;
     if ((err = mbc_master_start())) return err;
+    vTaskDelay(pdMS_TO_TICKS(1000)); //FIXME: Wait for the multimeter to stabilize
+
+
+    LOG_SUCCESS(TAG, "Multimeter initialized successfully on port %d", MB_PORT_NUM);
 
     return ESP_OK;
 }
@@ -41,6 +46,9 @@ esp_err_t multimeter_init(void) {
 esp_err_t multimeter_read_data(MultimeterData *data, size_t *num_registers) {
     if (!data || !num_registers) return ESP_ERR_INVALID_ARG;
 
+    // Always use the correct number of registers
+    size_t reg_count = target_register_set.size;
+    *num_registers = reg_count;
     
     for (size_t i = 0; i < *num_registers; i++) {
         const MultimeterRegister *reg = &target_register_set.registers[i];
@@ -77,7 +85,7 @@ esp_err_t multimeter_read_data(MultimeterData *data, size_t *num_registers) {
                     break;
             }
         } else {
-            ESP_LOGE(TAG, "Error reading %s: %s", 
+            LOG_ERROR(TAG, "Error reading %s: %s", 
                    reg->name, esp_err_to_name(data[i].error));
             data[i].value = NAN;
         }
@@ -131,13 +139,13 @@ esp_err_t multimeter_check_slave(uint8_t slave_addr, uint32_t timeout_ms) {
     for (int retry = 0; retry < 3; retry++) {
         esp_err_t err = mbc_master_send_request(&test_request, &test_data);
         if (err == ESP_OK) {
-            ESP_LOGI(TAG, "Slave %d responded successfully", slave_addr);
+            LOG_SUCCESS(TAG, "Slave %d responded successfully", slave_addr);
             return ESP_OK;
         }
         
         vTaskDelay(pdMS_TO_TICKS(100 * (retry + 1)));
     }
     
-    ESP_LOGE(TAG, "No response from slave %d after 3 attempts", slave_addr);
+    LOG_ERROR(TAG, "Slave %d not found", slave_addr);
     return ESP_ERR_TIMEOUT;
 }

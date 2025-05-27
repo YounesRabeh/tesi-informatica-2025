@@ -6,7 +6,6 @@
 static const MultimeterRegister targetRegister[] = {
     // Instant values
     { "Voltage_L1", "V", 0x0000, 2, 0x04, 0.001 },
-    { "Current_L1", "A", 0x000E, 2, 0x04, 0.001 },
     // Add other registers...
 };
 

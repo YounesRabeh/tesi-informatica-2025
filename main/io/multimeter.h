@@ -19,6 +19,8 @@
 #define MB_UART_RXD         8
 // Modbus UART (Request to Send)
 #define MB_UART_RTS         4
+// Modbus Init Delay (in milliseconds)
+#define MB_INIT_DELAY_MS    300
 
 
 

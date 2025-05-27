@@ -2,7 +2,8 @@
 #include "multimeter.h"
 #include "freertos/FreeRTOS.h" 
 #include "freertos/task.h"
-#include "esp_log.h"         
+#include "esp_log.h"       
+#include "logging.h"  
 
 static const char *TAG = "MAIN";
 
@@ -15,13 +16,13 @@ void app_main(void)
     //print vals
     esp_err_t ret = multimeter_init();
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Multimeter initialization failed!");
+        LOG_ERROR(TAG, "Multimeter initialization failed!");
         return;
     }
 
      // Check slave presence
     if (multimeter_check_slave(MB_SLAVE_ADDR, 1000) != ESP_OK) {
-        ESP_LOGE("MAIN", "Slave device not found!");
+        LOG_ERROR(TAG, "Slave device not found!");
         multimeter_cleanup();
         return;
     }
@@ -36,7 +37,7 @@ void app_main(void)
             // Convert to JSON
             char *json = multimeter_to_json(data, num_regs);
             if (json) {
-                printf("Multimeter Data:\n%s\n", json);
+                LOG_DEBUG(TAG, "Multimeter Data:\n%s\n", json);
                 free(json);
             }
         }
