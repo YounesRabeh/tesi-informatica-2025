@@ -5,7 +5,7 @@
 
 #include "esp_sntp.h"
 #include "esp_crt_bundle.h"
-#include "dto-builder.h"
+#include "dto_builder.h"
 
 /**
  * @brief The URL of the API endpoint to get time from.

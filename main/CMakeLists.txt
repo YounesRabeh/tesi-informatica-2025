@@ -1,18 +1,24 @@
 idf_component_register(
     SRCS 
         "system/system.c"
+        "system/memory.c"
+        "data/dto_builder.c"
+        "data/data_manager.c"
+        "io/target_registers.c"
+        "io/multimeter.c"
+        "io/converters.c"
         "connection/wifi.c" 
         "connection/lte.c" 
         "connection/internet.c"
-        "data/dto-builder.c"
-        "io/target_registers.c"
-        "io/multimeter.c"
         "main.c"
-    INCLUDE_DIRS "." "system" "connection" "data" "io" 
+    INCLUDE_DIRS "." "system" "data" "io" "connection" 
     REQUIRES 
+        esp_modem
         esp_http_client
+        driver
+        spiffs
         esp-tls
-        json
+        json    
         nvs_flash
         esp_netif
         esp_wifi

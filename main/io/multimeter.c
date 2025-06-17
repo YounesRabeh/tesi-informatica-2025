@@ -1,7 +1,9 @@
 #include "multimeter.h"
+#include "memory.h"
 #include "mbcontroller.h"
 #include "esp_log.h"
 #include "logging.h"
+#include "converters.h"
 #include "driver/uart.h"
 #include "cJSON.h"
 #include <math.h>
@@ -12,15 +14,6 @@
 
 static void* master_handler = NULL;
 
-// Conversion functions
-static float bytes_to_float(uint16_t high, uint16_t low, float scale) {
-    return ((uint32_t)high << 16 | low) * scale;
-}
-
-static double bytes_to_double(uint16_t b3, uint16_t b2, uint16_t b1, uint16_t b0, float scale) {
-    return ((uint64_t)b3 << 48 | (uint64_t)b2 << 32 | (uint64_t)b1 << 16 | b0) * scale;
-}
-
 esp_err_t multimeter_init(void) {
     mb_communication_info_t comm = {
         .port = MB_PORT_NUM,
@@ -29,17 +22,18 @@ esp_err_t multimeter_init(void) {
         .parity = MB_PARITY_MODE
     };
 
+
     esp_err_t err = mbc_master_init(MB_PORT_SERIAL_MASTER, &master_handler);
     if (err != ESP_OK || !master_handler) return err;
 
     if ((err = mbc_master_setup((void*)&comm))) return err;
     if ((err = uart_set_pin(MB_PORT_NUM, MB_UART_TXD, MB_UART_RXD, MB_UART_RTS, UART_PIN_NO_CHANGE))) return err;
     if ((err = mbc_master_start())) return err;
-    vTaskDelay(pdMS_TO_TICKS(1000)); //FIXME: Wait for the multimeter to stabilize
 
+    
+    vTaskDelay(pdMS_TO_TICKS(1000));
 
-    LOG_SUCCESS(TAG, "Multimeter initialized successfully on port %d", MB_PORT_NUM);
-
+    LOG_SUCCESS(TAG, "Port %d is Modbus Active", MB_PORT_NUM);
     return ESP_OK;
 }
 
@@ -49,6 +43,7 @@ esp_err_t multimeter_read_data(MultimeterData *data, size_t *num_registers) {
     // Always use the correct number of registers
     size_t reg_count = target_register_set.size;
     *num_registers = reg_count;
+
     
     for (size_t i = 0; i < *num_registers; i++) {
         const MultimeterRegister *reg = &target_register_set.registers[i];
@@ -89,12 +84,14 @@ esp_err_t multimeter_read_data(MultimeterData *data, size_t *num_registers) {
                    reg->name, esp_err_to_name(data[i].error));
             data[i].value = NAN;
         }
+         vTaskDelay(pdMS_TO_TICKS(MB_SLAVE_DELAY_BETWEEN_REQUESTS));
     }
     
     return ESP_OK;
 }
 
 char* multimeter_to_json(const MultimeterData *data, size_t num_registers) {
+    
     cJSON *root = cJSON_CreateObject();
     
     for (size_t i = 0; i < num_registers; i++) {
@@ -116,36 +113,11 @@ char* multimeter_to_json(const MultimeterData *data, size_t num_registers) {
     return json;
 }
 
+
+
 void multimeter_cleanup(void) {
     if (master_handler) {
         mbc_master_destroy();
         master_handler = NULL;
     }
-}
-
-esp_err_t multimeter_check_slave(uint8_t slave_addr, uint32_t timeout_ms) {
-    if (!master_handler) return ESP_ERR_INVALID_STATE;
-
-    mb_param_request_t test_request = {
-        .slave_addr = slave_addr,
-        .command = 0x04,  // Read input registers
-        .reg_start = 0x0000,  // Test with first register
-        .reg_size = 1
-    };
-
-    uint16_t test_data;
-    
-    // Try 3 times with increasing timeouts
-    for (int retry = 0; retry < 3; retry++) {
-        esp_err_t err = mbc_master_send_request(&test_request, &test_data);
-        if (err == ESP_OK) {
-            LOG_SUCCESS(TAG, "Slave %d responded successfully", slave_addr);
-            return ESP_OK;
-        }
-        
-        vTaskDelay(pdMS_TO_TICKS(100 * (retry + 1)));
-    }
-    
-    LOG_ERROR(TAG, "Slave %d not found", slave_addr);
-    return ESP_ERR_TIMEOUT;
 }

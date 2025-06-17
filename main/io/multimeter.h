@@ -22,6 +22,11 @@
 // Modbus Init Delay (in milliseconds)
 #define MB_INIT_DELAY_MS    300
 
+// 
+#define NUM_REGISTERS ((int)(target_register_set.size))
+
+#define MB_SLAVE_DELAY_BETWEEN_REQUESTS 50 // Delay between requests in milliseconds
+
 
 
 /**
@@ -45,12 +50,3 @@ char* multimeter_to_json(const MultimeterData *data, size_t num_registers);
  * This function stops the Modbus master communication and frees resources.
  */
 void multimeter_cleanup(void);
-
-/**
- * @brief Checks if a Modbus slave is responsive.
- * 
- * @param slave_addr The address of the Modbus slave to check.
- * @param timeout_ms Timeout in milliseconds for the check.
- * @return ESP_OK if the slave is responsive, otherwise an error code.
- */
-esp_err_t multimeter_check_slave(uint8_t slave_addr, uint32_t timeout_ms);

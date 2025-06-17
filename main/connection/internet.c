@@ -78,7 +78,7 @@ esp_err_t send_data(cJSON *json)
 }
 
 esp_err_t setup_ntp_time(void) {
-   esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
     esp_sntp_setservername(0, NTP_SERVER);
     esp_sntp_init();
 
@@ -96,6 +96,7 @@ esp_err_t setup_ntp_time(void) {
         LOG_ERROR(TAG, "Failed to sync time after %d attempts", NTP_MAX_RETRY_ATTEMPTS);
         return ESP_FAIL;
     } else {
+        localtime_r(&now, &timeinfo);
         LOG_SUCCESS(TAG, "Time synchronized: %s", asctime(&timeinfo));
         return ESP_OK;
     }
